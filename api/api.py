@@ -3,7 +3,12 @@ from flask import request, jsonify
 from bs4 import BeautifulSoup
 import urllib.request
 import re
+import requests
 
+
+
+#find: Get a single match result
+#findall: Return all matched results
 
 
 app = flask.Flask(__name__)
@@ -30,8 +35,9 @@ books = [
      'published': '1975'}
 ]
 
-url = "https://en.wikipedia.org/wiki/Artificial_intelligence"
-
+url2 = "https://en.wikipedia.org/wiki/Artificial_intelligence"
+url = "https://www.dataquest.io/blog/web-scraping-beautifulsoup/"
+URL = "https://cashchanger.co/singapore"
 
 
 @app.route('/', methods=['GET'])
@@ -68,6 +74,39 @@ def api_currencies():
     # # Getting a list of all keywords which are inserted into a keywords list in line 7.
     # keywords_raw = keyword_section.find_all(class_="keyword")
     # keyword_list = [word.get_text() for word in keywords_raw]
+
+@app.route('/api/v1/resources/currency/bestrate/all', methods=['GET'])
+def api_bestrate():
+    try:
+        # page = urllib.request.urlopen(url) # conntect to website
+        r = requests.get(URL)
+    except:
+        print("An error occured.")
+        # soup = BeautifulSoup(page, 'html.parser')
+    soup = BeautifulSoup(r.content, 'html.parser')
+    print(soup.prettify) # gives the visual representation of the parse tree created from the raw HTML content.
+    best_rate_container = soup.find('div', class_='container bestrate-container')
+    print(best_rate_container.prettify)
+
+
+    # regex = re.compile('^tocsection-')
+    #     # content_lis = soup.find_all('li', attrs={'class': regex})
+    #     # print(content_lis)
+    #     # content = []
+    #     # for li in content_lis:
+    #     #     content.append(li.getText().split('\n')[0])
+    #     # print(content)
+    #     # return jsonify(content)
+    return 'nyan'
+
+    # # Getting the keywords section
+    # keyword_section = soup.find(class_="keywords-section")
+    # # Same as: soup.select("div.article-wrapper grid row div.keywords-section")
+    #
+    # # Getting a list of all keywords which are inserted into a keywords list in line 7.
+    # keywords_raw = keyword_section.find_all(class_="keyword")
+    # keyword_list = [word.get_text() for word in keywords_raw]
+
 
 @app.route('/api/v1/resources/books', methods=['GET'])
 def api_id():
